@@ -169,7 +169,7 @@ public class Driver {
 		
 		if(args.length >= 2){
 			path = args[0];
-			topK = Integer.parseInt(args[1]);
+			topK = Integer.parseInt(args[1].trim());
 		}
 		
 		Driver driver = null;
