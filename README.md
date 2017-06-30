@@ -4,6 +4,7 @@
 	1. A high throughput, distributed in-memory key-value store would satisfy persistence requirements.
 	2. Modeled data structures to mimic a key-value store.
 	3. CustomerID is used as the primary hash for grouping events.
+	4. A more scalable design is to persist intermediate values used in LTA computation (like total expenditure, duration,   	 visits), per customer. This will help us avoid iterating over the complete set of data (.. past events if any).
 	
 - Assumptions : 
 	1. Assuming time-stamps pertaining to different event types belong to the same time-zone. 
