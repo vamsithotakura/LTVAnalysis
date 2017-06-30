@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Set;
 
 import com.LTVAnalysis.Analysis.LTVComputator;
@@ -41,9 +44,44 @@ public class Driver {
 	private void computeLTV(int topK) {
 		LTVComputator computeLTV = new LTVComputator();
 		Set<Result> results = computeLTV.getTOPK(3);
-		for(Result result : results) {
-			System.out.println(result.getCustomerID()+" ~~~ "+result.getLifeTimeValue());
+		publishResults(results, topK);
+	}
+	
+	private void publishResults(Set<Result> results, int topK) {
+
+		BufferedWriter writer = null;
+		String path = "./output/results.txt";
+		try{
+			writer = new BufferedWriter(new FileWriter(path,true));
+
+			Iterator<Result> resultsIterator = results.iterator();
+			
+			Result result = null;
+			for(int i=0; i<topK && resultsIterator.hasNext(); i++) {
+				result = resultsIterator.next();
+				
+				writer.write(Constants.CUSTOMER_ID_TAG);
+				writer.write(Constants.TAB);
+				writer.write(Constants.TAB);
+				writer.write(result.getCustomerID());
+				writer.write(Constants.TAB);
+				writer.write(Constants.TAB);
+				writer.write(Constants.LIFE_TIME_VALUE_TAG);
+				writer.write(String.valueOf(result.getLifeTimeValue()));
+				writer.newLine();
+			}
+		} catch(Exception e) {
+			throw new RuntimeException(e.getMessage());
+		} finally {
+			try {
+				if(writer != null) {
+					writer.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+
 	}
 	
 	private boolean initiateIngestion(JsonArray data) {
@@ -126,10 +164,14 @@ public class Driver {
 	
 	public static void main(String[] args) {
 		
-		String path = "D:/WORKSPACE/LTVAnalysis/Data/input2.txt";
-		//String path = "./Data/input2.txt";
+		String path = "./input/input2.txt";
+		int topK = 1;
 		
-		int topK = 2;
+		if(args.length >= 2){
+			path = args[0];
+			topK = Integer.parseInt(args[1]);
+		}
+		
 		Driver driver = null;
 		try{
 			driver = new Driver();
